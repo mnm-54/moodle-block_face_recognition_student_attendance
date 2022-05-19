@@ -44,7 +44,7 @@ class block_face_recognition_student_attendance extends block_base
             return $this->content;
         }
 
-        global $USER, $CFG;
+        global $USER, $CFG, $PAGE;
 
         $courses = enrol_get_my_courses();
 
@@ -55,9 +55,11 @@ class block_face_recognition_student_attendance extends block_base
 
         foreach ($courses as $course) {
             $editurl = $CFG->wwwroot;
-            $this->content->text .= $course->fullname . '<button type="button" style="float: right;" onclick="location.href=\'' . $editurl . '\'">Give attandance</button>'
+            $this->content->text .= $course->fullname . '<button type="button" style="float: right;" class="action-modal" >Give attandance</button>'
                 . '<br>' . '<br>';
         }
+
+        $this->page->requires->js_call_amd('block_face_recognition_student_attendance/attendance_modal', 'init', array());
 
         return $this->content;
     }
