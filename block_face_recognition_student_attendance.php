@@ -46,7 +46,7 @@ class block_face_recognition_student_attendance extends block_base
 
         global $USER, $CFG, $PAGE;
 
-        $courses = enrol_get_my_courses();
+        $courses = $this->get_enrolled_courselist($USER->id);
 
         $this->content = new stdClass;
         $this->content->text = $USER->username . '<br><hr>';
@@ -100,5 +100,19 @@ class block_face_recognition_student_attendance extends block_base
             }
         }
         return '<p>Please upload an image first</p>';
+    }
+
+    function get_enrolled_courselist($userid)
+    {
+        global $DB;
+        $sql = "SELECT c.fullname 'fullname'
+                FROM {role_assignments} r
+                JOIN {user} u on r.userid = u.id
+                JOIN {role} rn on r.roleid = rn.id
+                JOIN {context} ctx on r.contextid = ctx.id
+                JOIN {course} c on ctx.instanceid = c.id
+                WHERE rn.shortname = 'student' and u.id=" . $userid;
+        $courselist = $DB->get_records_sql($sql);
+        return $courselist;
     }
 }
