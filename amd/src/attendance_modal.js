@@ -1,6 +1,5 @@
 import $ from "jquery";
 import ModalFactory from "core/modal_factory";
-import ModalEvents from "core/modal_events";
 import Webcam from "./webcam";
 
 export const init = () => {
@@ -11,13 +10,18 @@ export const init = () => {
     ModalFactory.create({
       type: ModalFactory.types.SAVE_CANCEL,
       title: "Turn on webcam",
-      body: `<video id="webcam" autoplay playsinline width="640" height="480"></video>
-            <canvas id="canvas" class="d-none"></canvas>
-            <audio id="snapSound" src="audio/snap.wav" preload = "auto"></audio>`,
+      body: `
+      <p>webcam will be turned on to take video and image input for your attendance</p>
+      <button id='start-webcam' class="btn btn-primary">Start Webcam</button>
+      <button id='stop-webcam' class="btn btn-secondary">Cancel</button>
+      <video id="webcam" autoplay playsinline width="640" height="480"></video>
+      <canvas id="canvas" class="d-none"></canvas>
+      <audio id="snapSound" src="audio/snap.wav" preload = "auto"></audio>`,
     }).then(function (modal) {
       modal.setSaveButtonText("Start Webcam");
 
       modal.show();
+      $(".modal-footer").hide();
 
       const webcamElement = document.getElementById("webcam");
       const canvasElement = document.getElementById("canvas");
@@ -28,6 +32,21 @@ export const init = () => {
         canvasElement,
         snapSoundElement
       );
+
+      $("#start-webcam").on("click", function () {
+        webcam
+          .start()
+          .then((result) => {
+            window.console.log("webcam started", result);
+          })
+          .catch((err) => {
+            window.console.log(err);
+          });
+      });
+      $("#stop-webcam").on("click", function () {
+        webcam.stop();
+        window.location.href = $(location).attr("href");
+      });
     });
   });
 };
