@@ -38,7 +38,28 @@ class block_face_recognition_student_attendance_student_image extends external_a
 
     public static function get_student_course_image($courseid, $studentid)
     {
-        die(var_dump("inside the api"));
+        $context = context_course::instance($courseid);
+
+        $fs = get_file_storage();
+        if ($files = $fs->get_area_files($context->id, 'local_participant_image_upload', 'student_photo')) {
+            foreach ($files as $file) {
+                if ($studentid == $file->get_itemid() && $file->get_filename() != '.') {
+                    // Build the File URL. Long process! But extremely accurate.
+                    $fileurl = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename(), true);
+                    // Display the image
+                    $download_url = $fileurl->get_port() ? $fileurl->get_scheme() . '://' . $fileurl->get_host() . $fileurl->get_path() . ':' . $fileurl->get_port() : $fileurl->get_scheme() . '://' . $fileurl->get_host() . $fileurl->get_path();
+
+                    $return_value = [
+                        'image_url' => $download_url
+                    ];
+
+                    return $return_value;
+                }
+            }
+        }
+        return [
+            'image_url' => false
+        ];;
     }
 
     public static function get_student_course_image_returns()
