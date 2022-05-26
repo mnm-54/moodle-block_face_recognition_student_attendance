@@ -51,15 +51,14 @@ class block_face_recognition_student_attendance extends block_base
         $this->content = new stdClass;
         $this->content->text = $USER->username . '<br><hr>';
 
-        $this->content->text .= $this->fn_get_block_image_url(4, $USER->id);
+        // $this->content->text .= $this->fn_get_block_image_url(4, $USER->id);
 
         foreach ($courses as $course) {
-            $editurl = $CFG->wwwroot;
-            $this->content->text .= $course->fullname . '<button type="button" style="float: right;" class="action-modal" >Give attandance</button>'
+            $this->content->text .= $course->fullname . '<button type="button" id="' . $course->cid . '" style="float: right;" class="action-modal" >Give attandance</button>'
                 . '<br>' . '<br>';
         }
 
-        $this->page->requires->js_call_amd('block_face_recognition_student_attendance/attendance_modal', 'init', array());
+        $this->page->requires->js_call_amd('block_face_recognition_student_attendance/attendance_modal', 'init', array($USER->id));
 
         return $this->content;
     }
@@ -105,7 +104,7 @@ class block_face_recognition_student_attendance extends block_base
     function get_enrolled_courselist($userid)
     {
         global $DB;
-        $sql = "SELECT c.fullname 'fullname'
+        $sql = "SELECT c.fullname 'fullname', c.id 'cid'
                 FROM {role_assignments} r
                 JOIN {user} u on r.userid = u.id
                 JOIN {role} rn on r.roleid = rn.id
