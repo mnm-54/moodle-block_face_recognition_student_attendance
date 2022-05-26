@@ -32,12 +32,20 @@ $functions = array(
         'description' => 'Returns the student image saved in the course for attendance',
         'type'        => 'write',
         'ajax' => true,
+    ),
+    'block_face_recognition_student_attendance_update_db' => array(
+        'classname' => 'block_face_recognition_student_attendance_student_image',
+        'methodname'  => 'student_attendance_update',
+        'classpath'   => 'blocks/face_recognition_student_attendance/externallib.php',
+        'description' => 'Saves student data to attendance table after completing attendance',
+        'type'        => 'write',
+        'ajax' => true,
     )
 );
 
 $services = array(
     'block_face_recognition_student_attendance_services' => array(
-        'functions' => array('block_face_recognition_student_attendance_image_api'),
+        'functions' => array('block_face_recognition_student_attendance_image_api', 'block_face_recognition_student_attendance_update_db'),
         'restrictedusers' => 0,
         // into the administration
         'enabled' => 1,
