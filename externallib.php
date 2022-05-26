@@ -22,6 +22,8 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_calendar\local\event\forms\update;
+
 require_once("$CFG->libdir/externallib.php");
 
 class block_face_recognition_student_attendance_student_image extends external_api
@@ -59,7 +61,7 @@ class block_face_recognition_student_attendance_student_image extends external_a
         }
         return [
             'image_url' => false
-        ];;
+        ];
     }
 
     public static function get_student_course_image_returns()
@@ -67,6 +69,39 @@ class block_face_recognition_student_attendance_student_image extends external_a
         return new external_single_structure(
             array(
                 'image_url' => new external_value(PARAM_URL, 'Url of student image')
+            )
+        );
+    }
+
+    /**
+     * Update db for student attendance
+     */
+    public static function student_attendance_update_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, "Course id"),
+                'studentid' => new external_value(PARAM_INT, "Student id"),
+                'time' => new external_value(PARAM_INT, "Date & time of attendance")
+            )
+        );
+    }
+    public static function student_attendance_update($courseid, $studentid, $time)
+    {
+        global $DB;
+        $record = new stdClass();
+        $record->student_id = $studentid;
+        $record->course_id = $courseid;
+        $record->time = $time;
+        $DB->insert_record('block_face_recog_attendance', $record);
+
+        return ['status' => 'updated'];
+    }
+    public static function student_attendance_update_returns()
+    {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_TEXT, 'upadated or failed')
             )
         );
     }
