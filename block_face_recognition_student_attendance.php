@@ -29,7 +29,7 @@ class block_face_recognition_student_attendance extends block_base
 {
     function init()
     {
-        $this->title = 'attendance';
+        $this->title = get_string('pluginname', 'block_face_recognition_student_attendance');
     }
 
 
@@ -40,6 +40,8 @@ class block_face_recognition_student_attendance extends block_base
 
     function get_content()
     {
+        global $DB;
+
         if ($this->content !== NULL) {
             return $this->content;
         }
@@ -52,10 +54,16 @@ class block_face_recognition_student_attendance extends block_base
         $this->content->text = $USER->username . '<br><hr>';
 
         // $this->content->text .= $this->fn_get_block_image_url(4, $USER->id);
-
+        $today = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
         foreach ($courses as $course) {
-            $this->content->text .= $course->fullname . '<button type="button" id="' . $course->cid . '" style="float: right;" class="action-modal" >Give attandance</button>'
-                . '<br>' . '<br>';
+            $done = $DB->count_records("block_face_recog_attendance", array('student_id' => $USER->id, 'course_id' => $course->cid, 'time' => $today));
+            if ($done) {
+                $this->content->text .= $course->fullname . '<p style="float: right;" class="action-modal" >&#9989;</p>'
+                    . '<br>' . '<br>';
+            } else {
+                $this->content->text .= $course->fullname . '<button type="button" id="' . $course->cid . '" style="float: right;" class="action-modal" >Give attandance</button>'
+                    . '<br>' . '<br>';
+            }
         }
 
         $this->page->requires->js_call_amd('block_face_recognition_student_attendance/attendance_modal', 'init', array($USER->id));
