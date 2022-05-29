@@ -4,12 +4,9 @@ import Webcam from "./webcam";
 import Ajax from "core/ajax";
 
 export const init = (studentid) => {
-  window.console.log("we have been started");
-  window.console.log(studentid);
   $(".action-modal").on("click", function () {
     let st_img_url = "";
     let course_id = $(this).attr("id");
-    window.console.log(course_id);
 
     // ajax call
     let wsfunction = "block_face_recognition_student_attendance_image_api";
@@ -36,7 +33,7 @@ export const init = (studentid) => {
       <p>webcam will be turned on to take video and image input for your attendance</p>
       <button id='start-webcam' class="btn btn-primary">Start Webcam</button>
       <button id='stop-webcam' class="btn btn-secondary">Cancel</button>
-      <video id="webcam" autoplay playsinline width="640" height="480"></video>
+      <video id="webcam" autoplay playsinline width="300" height="225"></video>
       <img id="st-image" style="display: none;"/>
       <canvas id="canvas" class="d-none"></canvas>`,
     }).then(function (modal) {
@@ -49,12 +46,7 @@ export const init = (studentid) => {
       const canvasElement = document.getElementById("canvas");
       let studentimg = document.getElementById("st-image");
       studentimg.src = st_img_url;
-      // getting image
-      let context = canvasElement.getContext("2d");
-      context.clearRect(0, 0, studentimg.width, studentimg.height);
-      context.drawImage(studentimg, 0, 0, studentimg.width, studentimg.height);
-      let st_img = canvasElement.toDataURL("image/png");
-      window.console.log(st_img);
+      let st_img = "";
 
       let webcam = new Webcam(webcamElement, "user", canvasElement);
 
@@ -62,27 +54,51 @@ export const init = (studentid) => {
         webcam
           .start()
           .then((result) => {
-            window.console.log("webcam started", result);
+            window.console.log("webcam started");
           })
           .catch((err) => {
             window.console.log(err);
           });
 
-        setInterval(() => {
+        setTimeout(() => {
+          // getting image
+          if (!st_img) {
+            let context = canvasElement.getContext("2d");
+            context.clearRect(0, 0, studentimg.width, studentimg.height);
+            context.drawImage(
+              studentimg,
+              0,
+              0,
+              studentimg.width,
+              studentimg.height
+            );
+            st_img = canvasElement.toDataURL("image/png");
+          }
+
           var image = webcam.snap();
-          // fetch("http://13.229.125.223:5000/verify")
-          //   .then((res) => {
-          //     if (res.ok) {
-          //       window.console.log("success");
-          //     } else {
-          //       window.console.log("failure in connection");
-          //     }
-          //     res.json();
-          //   })
-          //   .then((data) => {
-          //     window.console.log(data);
-          //   });
-        }, 1000);
+
+          // ajax call
+          let wsfunction =
+            "block_face_recognition_student_attendance_face_recog_api";
+          let params = {
+            studentimg: st_img_url,
+            webcampicture: image,
+          };
+          let request = {
+            methodname: wsfunction,
+            args: params,
+          };
+
+          Ajax.call([request])[0]
+            .done(function (value) {
+              let result = value["confidence"];
+              window.console.log(result);
+            })
+            .fail(function (err) {
+              window.console.log(err);
+            });
+          // end of ajax call
+        }, 2000);
       });
       $("#stop-webcam").on("click", function () {
         webcam.stop();

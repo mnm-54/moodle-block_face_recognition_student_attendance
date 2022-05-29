@@ -91,7 +91,7 @@ export default class Webcam {
   /*
       1. Get permission from user
       2. Get all video input devices info
-      3. Select camera based on facingMode 
+      3. Select camera based on facingMode
       4. Start stream
     */
   async start(startStream = true) {
@@ -104,10 +104,12 @@ export default class Webcam {
           this.info() //get all video input devices info
             .then((webcams) => {
               this.selectCamera(); //select camera based on facingMode
+              window.console.log(webcams);
               if (startStream) {
                 this.stream()
                   .then((facingMode) => {
                     resolve(this._facingMode);
+                    window.console.log(facingMode);
                   })
                   .catch((error) => {
                     reject(error);
@@ -156,7 +158,7 @@ export default class Webcam {
           resolve(this._facingMode);
         })
         .catch((error) => {
-          console.log(error);
+          window.console.log(error);
           reject(error);
         });
     });
@@ -172,8 +174,8 @@ export default class Webcam {
   }
 
   snap() {
-    if (this._canvasElement != null) {
-      if (this._snapSoundElement != null) {
+    if (this._canvasElement !== null) {
+      if (this._snapSoundElement !== null) {
         this._snapSoundElement.play();
       }
       this._canvasElement.height = this._webcamElement.scrollHeight;
