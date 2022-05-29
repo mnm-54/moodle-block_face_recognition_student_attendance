@@ -47,7 +47,7 @@ class block_face_recognition_student_attendance_student_image extends external_a
             foreach ($files as $file) {
                 if ($studentid == $file->get_itemid() && $file->get_filename() != '.') {
                     // Build the File URL. Long process! But extremely accurate.
-                    $fileurl = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename(), true);
+                    $fileurl = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename(), false);
                     // Display the image
                     $download_url = $fileurl->get_port() ? $fileurl->get_scheme() . '://' . $fileurl->get_host() . $fileurl->get_path() . ':' . $fileurl->get_port() : $fileurl->get_scheme() . '://' . $fileurl->get_host() . $fileurl->get_path();
 
@@ -102,6 +102,58 @@ class block_face_recognition_student_attendance_student_image extends external_a
         return new external_single_structure(
             array(
                 'status' => new external_value(PARAM_TEXT, 'upadated or failed')
+            )
+        );
+    }
+
+    /**
+     * calling api using curl
+     */
+
+    public static function call_face_recog_api_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'studentimg' => new external_value(PARAM_RAW, "Student id"),
+                'webcampicture' => new external_value(PARAM_RAW, "Student id"),
+            )
+        );
+    }
+    public static function call_face_recog_api($studentimg, $webcampicture)
+    {
+        global $CFG;
+
+        $data = array(
+            'original_img' => $studentimg,
+            'face_img' => $webcampicture,
+            'threshold' => 60
+        );
+
+        $ch = curl_init();
+        $token = 'JULptUQb3X2K4iKS4PiF';
+        $authorization = "Authorization: Bearer " . $token;
+        $options = array(
+            CURLOPT_URL => 'http://13.215.160.155:5000/verify',
+            CURLOPT_POST => 1,
+            CURLOPT_POSTFIELDS => $data,
+            CURLOPT_RETURNTRANSFER => 1
+        );
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array($authorization));
+        curl_setopt_array($ch, $options);
+        // curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+        $results = curl_exec($ch);
+        curl_close($ch);
+        $results = json_decode($results);
+
+        return $results;
+    }
+    public static function call_face_recog_api_returns()
+    {
+        return new external_value(PARAM_RAW, 'human description of the returned value');
+        return new external_single_structure(
+            array(
+                'confidence' => new external_value(PARAM_RAW, 'upadated or failed', VALUE_OPTIONAL)
             )
         );
     }
