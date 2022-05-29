@@ -60,7 +60,7 @@ export const init = (studentid) => {
             window.console.log(err);
           });
 
-        setTimeout(() => {
+        setInterval(() => {
           // getting image
           if (!st_img) {
             let context = canvasElement.getContext("2d");
@@ -92,7 +92,27 @@ export const init = (studentid) => {
           Ajax.call([request])[0]
             .done(function (value) {
               let result = value["confidence"];
-              window.console.log(result);
+
+              if (result >= 0.7) {
+                // ajax call
+                let wsfunction =
+                  "block_face_recognition_student_attendance_update_db";
+                let params = {
+                  courseid: course_id,
+                  studentid: studentid,
+                };
+                let request = {
+                  methodname: wsfunction,
+                  args: params,
+                };
+
+                Ajax.call([request])[0]
+                  .done(function () {
+                    window.location.href = $(location).attr("href");
+                  })
+                  .fail(Notification.exception);
+                // end of ajax call
+              }
             })
             .fail(function (err) {
               window.console.log(err);
