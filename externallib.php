@@ -81,18 +81,17 @@ class block_face_recognition_student_attendance_student_image extends external_a
         return new external_function_parameters(
             array(
                 'courseid' => new external_value(PARAM_INT, "Course id"),
-                'studentid' => new external_value(PARAM_INT, "Student id"),
-                'time' => new external_value(PARAM_INT, "Date & time of attendance")
+                'studentid' => new external_value(PARAM_INT, "Student id")
             )
         );
     }
-    public static function student_attendance_update($courseid, $studentid, $time)
+    public static function student_attendance_update($courseid, $studentid)
     {
         global $DB;
         $record = new stdClass();
         $record->student_id = $studentid;
         $record->course_id = $courseid;
-        $record->time = $time;
+        $record->time =  mktime(0, 0, 0, date("m"), date("d"), date("Y"));
         $DB->insert_record('block_face_recog_attendance', $record);
 
         return ['status' => 'updated'];
@@ -123,6 +122,8 @@ class block_face_recognition_student_attendance_student_image extends external_a
     {
         global $CFG;
 
+        // return ['confidence' => .88];
+
         $data = array(
             'original_img' => $studentimg,
             'face_img' => $webcampicture,
@@ -150,7 +151,6 @@ class block_face_recognition_student_attendance_student_image extends external_a
     }
     public static function call_face_recog_api_returns()
     {
-        return new external_value(PARAM_RAW, 'human description of the returned value');
         return new external_single_structure(
             array(
                 'confidence' => new external_value(PARAM_RAW, 'upadated or failed', VALUE_OPTIONAL)
