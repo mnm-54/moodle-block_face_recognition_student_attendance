@@ -120,31 +120,83 @@ class block_face_recognition_student_attendance_student_image extends external_a
     }
     public static function call_face_recog_api($studentimg, $webcampicture)
     {
-        global $CFG;
+        $studentimg = str_replace('data:image/png;base64,', '', $studentimg);
+        $webcampicture = str_replace('data:image/png;base64,', '', $webcampicture);
 
-        // return ['confidence' => .88];
-
-        $data = array(
-            'original_img' => $studentimg,
-            'face_img' => $webcampicture,
-            'threshold' => 60
+        $delimiter = '-------------' . uniqid();
+        // file upload fields: name => array(type=>'mime/type',content=>'raw data')
+        $fileFields = array(
+            'original_img' => array(
+                'type' => 'image/png',
+                'filename' => 'image1.png',
+                'transfer-type' => 'binary',
+                'content' => $studentimg
+            ),
+            'face_img' => array(
+                'type' => 'image/png',
+                'filename' => 'image2.png',
+                'transfer-type' => 'binary',
+                'content' => $webcampicture
+            ), /* ... */
+        );
+        // all other fields (not file upload): name => value
+        $postFields = array(
+            'threshold' => 60,
+            /* ... */
         );
 
-        $ch = curl_init();
-        $token = 'JULptUQb3X2K4iKS4PiF';
-        $authorization = "Authorization: Bearer " . $token;
-        $options = array(
-            CURLOPT_URL => 'http://13.215.160.155:5000/verify',
-            CURLOPT_POST => 1,
-            CURLOPT_POSTFIELDS => $data,
-            CURLOPT_RETURNTRANSFER => 1
-        );
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array($authorization));
-        curl_setopt_array($ch, $options);
-        // curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 
-        $results = curl_exec($ch);
-        curl_close($ch);
+
+        $data = '';
+
+
+
+        // populate normal fields first (simpler)
+        foreach ($postFields as $name => $content) {
+            $data .= "--" . $delimiter . "\r\n";
+            $data .= 'Content-Disposition: form-data; name="' . $name . '"';
+            // note: double endline
+            $data .= "\r\n\r\n";
+            $data .= $content;
+            $data .= "\r\n";
+        }
+        // populate file fields
+        foreach ($fileFields as $name => $file) {
+            $data .= "--" . $delimiter . "\r\n";
+            // "filename" attribute is not essential; server-side scripts may use it
+            $data .= 'Content-Disposition: form-data; name="' . $name . '";' .
+                ' filename="' . $file['filename'] . '"' . "\r\n";
+            // this is, again, informative only; good practice to include though
+            $data .= 'Content-Type: ' . $file['type'] . "\r\n";
+            // this endline must be here to indicate end of headers
+            $data .= "\r\n";
+            // $data .= 'Content-Transfer-Encoding: ' . $file['transfer-type'] . "\r\n";
+            // // this endline must be here to indicate end of headers
+            // $data .= "\r\n";
+            // the file itself (note: there's no encoding of any kind)
+            $data .= $file['content'] . "\r\n";
+        }
+        // last delimiter
+        $data .= "--" . $delimiter . "--\r\n";
+
+        // echo $data;
+        // var_dump($delimiter);
+        $url = "http://13.215.160.155:5000/verify";
+
+
+        $handle = curl_init($url);
+        curl_setopt($handle, CURLOPT_POST, true);
+        curl_setopt($handle, CURLOPT_HTTPHEADER, array(
+            'Content-Type: multipart/form-data; boundary=' . $delimiter,
+            'Content-Length: ' . strlen($data),
+            'Authorization: Bearer XqMAlvpC4B8x7l6OCrSW'
+        ));
+
+        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+
+        curl_setopt($handle, CURLOPT_POSTFIELDS, $data);
+        $results = curl_exec($handle);
+        curl_close($handle);
         $results = json_decode($results);
 
         return $results;
