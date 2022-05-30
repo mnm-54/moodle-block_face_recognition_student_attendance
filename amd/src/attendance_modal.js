@@ -81,7 +81,7 @@ export const init = (studentid) => {
           let wsfunction =
             "block_face_recognition_student_attendance_face_recog_api";
           let params = {
-            studentimg: st_img_url,
+            studentimg: st_img,
             webcampicture: image,
           };
           let request = {
