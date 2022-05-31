@@ -35,5 +35,20 @@ if($ADMIN->fulltree) {
         get_string('failedmessagetext', 'block_face_recognition_student_attendance'),
         get_string('failedmessagelongtext', 'block_face_recognition_student_attendance'),
         ''));
+
+    $settings->add(new admin_setting_configtext('block_face_recognition_student_attendance/username',
+        get_string('usernametext', 'block_face_recognition_student_attendance'),
+        get_string('usernamelongtext', 'block_face_recognition_student_attendance'),
+        ''));
+
+    $settings->add(new admin_setting_configpasswordunmask('block_face_recognition_student_attendance/password',
+        get_string('passwordtext', 'block_face_recognition_student_attendance'),
+        get_string('passwordlongtext', 'block_face_recognition_student_attendance'), ''));
+    
+        $settings->add(new admin_setting_configtext('block_face_recognition_student_attendance/endpoint',
+        get_string('endpointtext', 'block_face_recognition_student_attendance'),
+        get_string('endpointlongtext', 'block_face_recognition_student_attendance'),
+        ''));
+
     
 }
