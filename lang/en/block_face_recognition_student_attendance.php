@@ -26,3 +26,7 @@ $string['face_recognition_student_attendance:addinstance'] = 'Add a new face_rec
 $string['face_recognition_student_attendance:myaddinstance'] = 'Add a new face_recognition_student_attendance to Dashboard';
 $string['face_recognition_student_attendance'] = '(new face_recognition_student_attendance)';
 $string['pluginname'] = 'Student Attendance block';
+$string['successmessagetext'] = 'Sucessful Attendance Message';
+$string['successmessagelongtext'] = 'Sucess message after attendance is taken';
+$string['failedmessagetext'] = 'Failed Attendance Message';
+$string['failedmessagelongtext'] = 'Failed message text after a failed attendance attempt';

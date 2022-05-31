@@ -189,7 +189,7 @@ class block_face_recognition_student_attendance_student_image extends external_a
         curl_setopt($handle, CURLOPT_HTTPHEADER, array(
             'Content-Type: multipart/form-data; boundary=' . $delimiter,
             'Content-Length: ' . strlen($data),
-            'Authorization: Bearer XqMAlvpC4B8x7l6OCrSW'
+            'Authorization: Bearer 5JAVEPJS1iQU2nqtVM5l'
         ));
 
         curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);

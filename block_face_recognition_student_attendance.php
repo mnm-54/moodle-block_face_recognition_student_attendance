@@ -61,12 +61,13 @@ class block_face_recognition_student_attendance extends block_base
                 $this->content->text .= $course->fullname . '<p style="float: right;" class="action-modal" >&#9989;</p>'
                     . '<br>' . '<br>';
             } else {
-                $this->content->text .= $course->fullname . '<button type="button" id="' . $course->cid . '" style="float: right;" class="action-modal" >Give attandance</button>'
+                $this->content->text .= $course->fullname . '<button type="button" id="' . $course->cid . '" style="float: right;" class="action-modal btn btn-primary" >Give attandance</button>'
                     . '<br>' . '<br>';
             }
         }
-
-        $this->page->requires->js_call_amd('block_face_recognition_student_attendance/attendance_modal', 'init', array($USER->id));
+        $successmessage = get_config('block_face_recognition_student_attendance','successmessage');
+        $failedmessage = get_config('block_face_recognition_student_attendance', 'failedmessage');
+        $this->page->requires->js_call_amd('block_face_recognition_student_attendance/attendance_modal', 'init', array($USER->id, $successmessage, $failedmessage));
 
         return $this->content;
     }
