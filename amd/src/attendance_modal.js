@@ -128,7 +128,7 @@ export const init = (studentid, successmessage, failedmessage) => {
             let result = value["confidence"];
             console.log(value);
 
-            if (result >= 0.7) {
+            if (result >= 0.6) {
               console.log("Success");
               displaySuccessMessage();
               logAttendance();
@@ -164,71 +164,6 @@ export const init = (studentid, successmessage, failedmessage) => {
           .catch((err) => {
             window.console.log(err);
           });
-
-        // setInterval(() => {
-        // getting image
-        // if (!st_img) {
-
-        //   const canvas = document.createElement('canvas');
-        //   const ctx = canvas.getContext('2d');
-        //   // Set width and height
-        //   canvas.width = studentimg.width;
-        //   canvas.height = studentimg.height;
-        //   // Draw the image
-        //   ctx.drawImage(studentimg, 0, 0);
-        //   st_img = canvas.toDataURL('image/png');
-
-        // }
-
-        // var image = webcam.snap();
-        // console.log(st_img);
-        // console.log(image);
-
-        // // ajax call
-        // let wsfunction =
-        //   "block_face_recognition_student_attendance_face_recog_api";
-        // let params = {
-        //   studentimg: st_img,
-        //   webcampicture: image,
-        // };
-        // let request = {
-        //   methodname: wsfunction,
-        //   args: params,
-        // };
-
-        // Ajax.call([request])[0]
-        //   .done(function (value) {
-        //     let result = value["confidence"];
-        //     console.log(value);
-
-        //     if (result >= 0.7) {
-        //       console.log('Success');
-        //       // ajax call
-        //       // let wsfunction =
-        //       //   "block_face_recognition_student_attendance_update_db";
-        //       // let params = {
-        //       //   courseid: course_id,
-        //       //   studentid: studentid,
-        //       // };
-        //       // let request = {
-        //       //   methodname: wsfunction,
-        //       //   args: params,
-        //       // };
-
-        //       // Ajax.call([request])[0]
-        //       //   .done(function () {
-
-        //       //     //window.location.href = $(location).attr("href");
-        //       //   })
-        //       //   .fail(Notification.exception);
-        //       // // end of ajax call
-        //     }
-        //   })
-        //   .fail(function (err) {
-        //     window.console.log(err);
-        //   });
-        // end of ajax call
-        // }, 2000);
       });
       $("#stop-webcam").on("click", function () {
         webcam.stop();
