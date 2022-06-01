@@ -120,6 +120,11 @@ class block_face_recognition_student_attendance_student_image extends external_a
     }
     public static function call_face_recog_api($studentimg, $webcampicture)
     {
+        $url = get_config('block_face_recognition_student_attendance', 'endpoint');
+
+        $token = self::get_bearer_token($url);
+        $token = $token->token;
+
         $studentimg = str_replace('data:image/png;base64,', '', $studentimg);
         $webcampicture = str_replace('data:image/png;base64,', '', $webcampicture);
 
@@ -181,15 +186,13 @@ class block_face_recognition_student_attendance_student_image extends external_a
 
         // echo $data;
         // var_dump($delimiter);
-        $url = "http://13.215.160.155:5000/verify";
-
-
+        $url .= '/verify';
         $handle = curl_init($url);
         curl_setopt($handle, CURLOPT_POST, true);
         curl_setopt($handle, CURLOPT_HTTPHEADER, array(
             'Content-Type: multipart/form-data; boundary=' . $delimiter,
             'Content-Length: ' . strlen($data),
-            'Authorization: Bearer 5JAVEPJS1iQU2nqtVM5l'
+            'Authorization: Bearer ' . $token,
         ));
 
         curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
@@ -208,5 +211,49 @@ class block_face_recognition_student_attendance_student_image extends external_a
                 'confidence' => new external_value(PARAM_RAW, 'upadated or failed', VALUE_OPTIONAL)
             )
         );
+    }
+
+    private static function get_bearer_token($endpoint)
+    {
+        $username = get_config('block_face_recognition_student_attendance', 'username');
+        $paswd = get_config('block_face_recognition_student_attendance', 'password');
+
+        $delimiter = '-------------' . uniqid();
+        // post fields 
+        $postFields = array(
+            'username' => $username,
+            'password' =>  $paswd,
+        );
+
+        $data = '';
+        // populate normal fields first (simpler)
+        foreach ($postFields as $name => $content) {
+            $data .= "--" . $delimiter . "\r\n";
+            $data .= 'Content-Disposition: form-data; name="' . $name . '"';
+            // note: double endline
+            $data .= "\r\n\r\n";
+            $data .= $content;
+            $data .= "\r\n";
+        }
+        // last delimiter
+        $data .= "--" . $delimiter . "--\r\n";
+
+        $endpoint .= '/get_token';
+
+        $handle = curl_init($endpoint);
+        curl_setopt($handle, CURLOPT_POST, true);
+        curl_setopt($handle, CURLOPT_HTTPHEADER, array(
+            'Content-Type: multipart/form-data; boundary=' . $delimiter,
+            'Content-Length: ' . strlen($data)
+        ));
+
+        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+
+        curl_setopt($handle, CURLOPT_POSTFIELDS, $data);
+        $token = curl_exec($handle);
+        curl_close($handle);
+        $token = json_decode($token);
+
+        return $token;
     }
 }
