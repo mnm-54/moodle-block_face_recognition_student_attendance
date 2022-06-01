@@ -132,6 +132,9 @@ export const init = (studentid, successmessage, failedmessage) => {
               console.log("Success");
               displaySuccessMessage();
               logAttendance();
+              setTimeout(() => {
+                window.location.href = $(location).attr("href");
+              }, 1000);
             } else {
               displayFailedMessage();
             }
