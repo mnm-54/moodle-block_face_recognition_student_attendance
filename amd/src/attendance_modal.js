@@ -4,7 +4,6 @@ import Webcam from "./webcam";
 import Ajax from "core/ajax";
 export const init = (studentid, successmessage, failedmessage) => {
   $(".action-modal").on("click", function () {
-    
     let st_img_url = "";
     let course_id = $(this).attr("id");
 
@@ -53,26 +52,26 @@ export const init = (studentid, successmessage, failedmessage) => {
 
       let webcam = new Webcam(webcamElement, "user", canvasElement);
       function getDataUrl(studentimg) {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
         // Set width and height
         canvas.width = studentimg.width;
         canvas.height = studentimg.height;
         // Draw the image
         ctx.drawImage(studentimg, 0, 0);
-        return canvas.toDataURL('image/png');
+        return canvas.toDataURL("image/png");
       }
       function displaySubmitAttendance() {
-        document.getElementById('submit-attendance').style.display = "block";
+        document.getElementById("submit-attendance").style.display = "block";
       }
       function hideSubmitAttendance() {
-        document.getElementById('submit-attendance').style.display = "none";
+        document.getElementById("submit-attendance").style.display = "none";
       }
       function displayTryAgain() {
-        document.getElementById('try-again').style.display = "block";
+        document.getElementById("try-again").style.display = "block";
       }
       function hideTryAgain() {
-        document.getElementById('try-again').style.display = "none";
+        document.getElementById("try-again").style.display = "none";
       }
       function removeMessages() {
         const message = document.getElementById("message");
@@ -80,26 +79,23 @@ export const init = (studentid, successmessage, failedmessage) => {
           message.removeChild(message.firstChild);
         }
       }
-      function displaySuccessMessage () {
+      function displaySuccessMessage() {
         hideSubmitAttendance();
         displayMessage(successmessage, 1);
-      } 
-      function displayFailedMessage () {
+      }
+      function displayFailedMessage() {
         hideSubmitAttendance();
         displayTryAgain();
         displayMessage(failedmessage, 0);
-        
       }
       function displayMessage(message, flag) {
         var spn = document.createElement("span");
         spn.textContent = message + ".";
-        spn.setAttribute('class', flag ? 'text-success' : 'text-danger');
-        document.getElementById('message').appendChild(spn);
+        spn.setAttribute("class", flag ? "text-success" : "text-danger");
+        document.getElementById("message").appendChild(spn);
       }
       function logAttendance() {
-             
-        let wsfunction =
-          "block_face_recognition_student_attendance_update_db";
+        let wsfunction = "block_face_recognition_student_attendance_update_db";
         let params = {
           courseid: course_id,
           studentid: studentid,
@@ -111,12 +107,11 @@ export const init = (studentid, successmessage, failedmessage) => {
 
         Ajax.call([request])[0]
           .done(function () {
-
             window.location.href = $(location).attr("href");
           })
           .fail(Notification.exception);
       }
-      function submitAttendance (st_img, image) {
+      function submitAttendance(st_img, image) {
         let wsfunction =
           "block_face_recognition_student_attendance_face_recog_api";
         let params = {
@@ -134,7 +129,7 @@ export const init = (studentid, successmessage, failedmessage) => {
             console.log(value);
 
             if (result >= 0.7) {
-              console.log('Success');
+              console.log("Success");
               displaySuccessMessage();
               logAttendance();
             } else {
@@ -151,19 +146,19 @@ export const init = (studentid, successmessage, failedmessage) => {
           .start()
           .then((result) => {
             displaySubmitAttendance();
-            
-            $('#submit-attendance').on('click', function () {
+
+            $("#submit-attendance").on("click", function () {
               removeMessages();
               if (!st_img) {
                 st_img = getDataUrl(studentimg);
               }
               let image = webcam.snap();
-              submitAttendance(st_img, image);    
+              submitAttendance(st_img, image);
             });
-            $('#try-again').on('click', function () {
+            $("#try-again").on("click", function () {
               removeMessages();
               hideTryAgain();
-              document.getElementById('submit-attendance').click();
+              document.getElementById("submit-attendance").click();
             });
           })
           .catch((err) => {
@@ -171,68 +166,68 @@ export const init = (studentid, successmessage, failedmessage) => {
           });
 
         // setInterval(() => {
-          // getting image
-          // if (!st_img) {
+        // getting image
+        // if (!st_img) {
 
-          //   const canvas = document.createElement('canvas');
-          //   const ctx = canvas.getContext('2d');
-          //   // Set width and height
-          //   canvas.width = studentimg.width;
-          //   canvas.height = studentimg.height;
-          //   // Draw the image
-          //   ctx.drawImage(studentimg, 0, 0);
-          //   st_img = canvas.toDataURL('image/png');
+        //   const canvas = document.createElement('canvas');
+        //   const ctx = canvas.getContext('2d');
+        //   // Set width and height
+        //   canvas.width = studentimg.width;
+        //   canvas.height = studentimg.height;
+        //   // Draw the image
+        //   ctx.drawImage(studentimg, 0, 0);
+        //   st_img = canvas.toDataURL('image/png');
 
-          // }
+        // }
 
-          // var image = webcam.snap();
-          // console.log(st_img);
-          // console.log(image);
+        // var image = webcam.snap();
+        // console.log(st_img);
+        // console.log(image);
 
-          // // ajax call
-          // let wsfunction =
-          //   "block_face_recognition_student_attendance_face_recog_api";
-          // let params = {
-          //   studentimg: st_img,
-          //   webcampicture: image,
-          // };
-          // let request = {
-          //   methodname: wsfunction,
-          //   args: params,
-          // };
+        // // ajax call
+        // let wsfunction =
+        //   "block_face_recognition_student_attendance_face_recog_api";
+        // let params = {
+        //   studentimg: st_img,
+        //   webcampicture: image,
+        // };
+        // let request = {
+        //   methodname: wsfunction,
+        //   args: params,
+        // };
 
-          // Ajax.call([request])[0]
-          //   .done(function (value) {
-          //     let result = value["confidence"];
-          //     console.log(value);
+        // Ajax.call([request])[0]
+        //   .done(function (value) {
+        //     let result = value["confidence"];
+        //     console.log(value);
 
-          //     if (result >= 0.7) {
-          //       console.log('Success');
-          //       // ajax call
-          //       // let wsfunction =
-          //       //   "block_face_recognition_student_attendance_update_db";
-          //       // let params = {
-          //       //   courseid: course_id,
-          //       //   studentid: studentid,
-          //       // };
-          //       // let request = {
-          //       //   methodname: wsfunction,
-          //       //   args: params,
-          //       // };
+        //     if (result >= 0.7) {
+        //       console.log('Success');
+        //       // ajax call
+        //       // let wsfunction =
+        //       //   "block_face_recognition_student_attendance_update_db";
+        //       // let params = {
+        //       //   courseid: course_id,
+        //       //   studentid: studentid,
+        //       // };
+        //       // let request = {
+        //       //   methodname: wsfunction,
+        //       //   args: params,
+        //       // };
 
-          //       // Ajax.call([request])[0]
-          //       //   .done(function () {
+        //       // Ajax.call([request])[0]
+        //       //   .done(function () {
 
-          //       //     //window.location.href = $(location).attr("href");
-          //       //   })
-          //       //   .fail(Notification.exception);
-          //       // // end of ajax call
-          //     }
-          //   })
-          //   .fail(function (err) {
-          //     window.console.log(err);
-          //   });
-          // end of ajax call
+        //       //     //window.location.href = $(location).attr("href");
+        //       //   })
+        //       //   .fail(Notification.exception);
+        //       // // end of ajax call
+        //     }
+        //   })
+        //   .fail(function (err) {
+        //     window.console.log(err);
+        //   });
+        // end of ajax call
         // }, 2000);
       });
       $("#stop-webcam").on("click", function () {
@@ -241,6 +236,4 @@ export const init = (studentid, successmessage, failedmessage) => {
       });
     });
   });
-
-  
 };
