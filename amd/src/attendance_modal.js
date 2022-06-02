@@ -21,7 +21,6 @@ export const init = (studentid, successmessage, failedmessage) => {
     Ajax.call([request])[0]
       .done(function (value) {
         st_img_url = value["image_url"];
-        console.log(st_img_url);
         create_modal();
       })
       .fail(Notification.exception);
@@ -43,17 +42,23 @@ export const init = (studentid, successmessage, failedmessage) => {
         <div id="message"></div>`,
       }).then(function (modal) {
         modal.setSaveButtonText("Start Webcam");
-  
+
         modal.show();
         $(".modal-footer").hide();
-  
+
         const webcamElement = document.getElementById("webcam");
         const canvasElement = document.getElementById("canvas");
         let studentimg = document.getElementById("st-image");
         studentimg.src = st_img_url;
         let st_img = "";
-  
+
         let webcam = new Webcam(webcamElement, "user", canvasElement);
+
+        $(".close").on("click", function () {
+          webcam.stop();
+          window.location.href = $(location).attr("href");
+        });
+
         function getDataUrl(studentimg) {
           const canvas = document.createElement("canvas");
           const ctx = canvas.getContext("2d");
@@ -98,7 +103,8 @@ export const init = (studentid, successmessage, failedmessage) => {
           document.getElementById("message").appendChild(spn);
         }
         function logAttendance() {
-          let wsfunction = "block_face_recognition_student_attendance_update_db";
+          let wsfunction =
+            "block_face_recognition_student_attendance_update_db";
           let params = {
             courseid: course_id,
             studentid: studentid,
@@ -107,7 +113,7 @@ export const init = (studentid, successmessage, failedmessage) => {
             methodname: wsfunction,
             args: params,
           };
-  
+
           Ajax.call([request])[0]
             .done(function () {
               window.location.href = $(location).attr("href");
@@ -121,20 +127,18 @@ export const init = (studentid, successmessage, failedmessage) => {
             studentimg: st_img,
             webcampicture: image,
           };
-          console.log(st_img);
-          console.log(image);
           let request = {
             methodname: wsfunction,
             args: params,
           };
-  
+
           Ajax.call([request])[0]
             .done(function (value) {
               let result = value["confidence"];
-              console.log(value);
-  
+              window.console.log(value);
+
               if (result >= 0.6) {
-                console.log("Success");
+                window.console.log("Success");
                 displaySuccessMessage();
                 logAttendance();
                 setTimeout(() => {
@@ -154,7 +158,7 @@ export const init = (studentid, successmessage, failedmessage) => {
             .start()
             .then((result) => {
               displaySubmitAttendance();
-  
+
               $("#submit-attendance").on("click", function () {
                 removeMessages();
                 if (!st_img) {
