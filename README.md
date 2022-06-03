@@ -45,17 +45,9 @@ These instructions will get you a copy of the project up and running on your loc
 
 You need to have 2 other plugins instelled in you moodle system to to have it working perfectly.
 
-- `local_participant_image_upload` for uploading student images according to courses
+- <a name="usage" target="_blank" href="https://github.com/mnm-54/moodle-local_participant_image_upload">local_participant_image_upload</a> for uploading student images according to courses
 
-```
-https://github.com/mnm-54/moodle-local_participant_image_upload
-```
-
-- `block_admin_courselist` for accessing the local plugin easily
-
-```
-https://github.com/mnm-54/moodle-block_admin_courselist
-```
+- <a name="usage" target="_blank" href="https://github.com/mnm-54/moodle-block_admin_courselist">block_admin_courselist</a> for accessing the local plugin easily
 
 - You will alson need a Ml face recongniton api that can receive base64 image data and threshold
 
