@@ -59,7 +59,7 @@ class block_face_recognition_student_attendance extends block_base
             $done = $DB->count_records("block_face_recog_attendance", array('student_id' => $USER->id, 'course_id' => $course->cid, 'time' => $today));
             if ($done) {
                 $this->content->text .= "<div>";
-                $this->content->text .= $course->fullname . '<p style="float: right;" class="action-modal" >&#9989;</p>';
+                $this->content->text .= $course->fullname . '<p style="float: right;" >&#9989;</p>';
                 $this->content->text .= "</div>" . '<br>' . '<br>';
             } else {
                 $this->content->text .= "<div>";
