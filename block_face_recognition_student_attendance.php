@@ -63,7 +63,8 @@ class block_face_recognition_student_attendance extends block_base
                 $this->content->text .= "</div>" . '<br>' . '<br>';
             } else {
                 $this->content->text .= "<div>";
-                $this->content->text .= $course->fullname . '<button type="button" id="' . $course->cid . '" style="float: right;" class="action-modal btn-primary" >attendance</button>';
+                $this->content->text .= $course->fullname . '<button type="button" id="' . $course->cid
+                    . '" style="float: right;border-radius:5px; padding:5px" class="action-modal btn-primary" >attendance</button>';
                 $this->content->text .= "</div>" . '<br>' . '<br>';
             }
         }
