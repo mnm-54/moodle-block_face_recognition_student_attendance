@@ -58,11 +58,13 @@ class block_face_recognition_student_attendance extends block_base
         foreach ($courses as $course) {
             $done = $DB->count_records("block_face_recog_attendance", array('student_id' => $USER->id, 'course_id' => $course->cid, 'time' => $today));
             if ($done) {
-                $this->content->text .= $course->fullname . '<p style="float: right;" class="action-modal" >&#9989;</p>'
-                    . '<br>' . '<br>';
+                $this->content->text .= "<div>";
+                $this->content->text .= $course->fullname . '<p style="float: right;" class="action-modal" >&#9989;</p>';
+                $this->content->text .= "</div>" . '<br>' . '<br>';
             } else {
-                $this->content->text .= $course->fullname . '<button type="button" id="' . $course->cid . '" style="float: right;" class="action-modal btn-primary" >attendance</button>'
-                    . '<br>' . '<br>';
+                $this->content->text .= "<div>";
+                $this->content->text .= $course->fullname . '<button type="button" id="' . $course->cid . '" style="float: right;" class="action-modal btn-primary" >attendance</button>';
+                $this->content->text .= "</div>" . '<br>' . '<br>';
             }
         }
         $successmessage = get_config('block_face_recognition_student_attendance', 'successmessage');
