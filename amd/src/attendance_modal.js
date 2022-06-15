@@ -26,7 +26,7 @@ export const init = (studentid, successmessage, failedmessage) => {
       .fail(Notification.exception);
     // end of ajax call
 
-    function create_modal() {
+    let create_modal = () => {
       ModalFactory.create({
         type: ModalFactory.types.SAVE_CANCEL,
         title: "Turn on webcam",
@@ -59,7 +59,7 @@ export const init = (studentid, successmessage, failedmessage) => {
           window.location.href = $(location).attr("href");
         });
 
-        function getDataUrl(studentimg) {
+        let getDataUrl = (studentimg) => {
           const canvas = document.createElement("canvas");
           const ctx = canvas.getContext("2d");
           // Set width and height
@@ -68,41 +68,41 @@ export const init = (studentid, successmessage, failedmessage) => {
           // Draw the image
           ctx.drawImage(studentimg, 0, 0);
           return canvas.toDataURL("image/png");
-        }
-        function displaySubmitAttendance() {
+        };
+        let displaySubmitAttendance = () => {
           document.getElementById("submit-attendance").style.display = "block";
-        }
-        function hideSubmitAttendance() {
+        };
+        let hideSubmitAttendance = () => {
           document.getElementById("submit-attendance").style.display = "none";
-        }
-        function displayTryAgain() {
+        };
+        let displayTryAgain = () => {
           document.getElementById("try-again").style.display = "block";
-        }
-        function hideTryAgain() {
+        };
+        let hideTryAgain = () => {
           document.getElementById("try-again").style.display = "none";
-        }
-        function removeMessages() {
+        };
+        let removeMessages = () => {
           const message = document.getElementById("message");
           while (message.hasChildNodes()) {
             message.removeChild(message.firstChild);
           }
-        }
-        function displaySuccessMessage() {
+        };
+        let displaySuccessMessage = () => {
           hideSubmitAttendance();
           displayMessage(successmessage, 1);
-        }
-        function displayFailedMessage() {
+        };
+        let displayFailedMessage = () => {
           hideSubmitAttendance();
           displayTryAgain();
           displayMessage(failedmessage, 0);
-        }
-        function displayMessage(message, flag) {
+        };
+        let displayMessage = (message, flag) => {
           var spn = document.createElement("span");
           spn.textContent = message + ".";
           spn.setAttribute("class", flag ? "text-success" : "text-danger");
           document.getElementById("message").appendChild(spn);
-        }
-        function logAttendance() {
+        };
+        let logAttendance = () => {
           let wsfunction =
             "block_face_recognition_student_attendance_update_db";
           let params = {
@@ -119,8 +119,8 @@ export const init = (studentid, successmessage, failedmessage) => {
               window.location.href = $(location).attr("href");
             })
             .fail(Notification.exception);
-        }
-        function submitAttendance(st_img, image) {
+        };
+        let submitAttendance = (st_img, image) => {
           let wsfunction =
             "block_face_recognition_student_attendance_face_recog_api";
           let params = {
@@ -152,7 +152,7 @@ export const init = (studentid, successmessage, failedmessage) => {
               window.console.log(err);
             });
           // end of ajax call
-        }
+        };
         $("#start-webcam").on("click", function () {
           webcam
             .start()
@@ -182,6 +182,6 @@ export const init = (studentid, successmessage, failedmessage) => {
           window.location.href = $(location).attr("href");
         });
       });
-    }
+    };
   });
 };
