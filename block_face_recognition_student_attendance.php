@@ -125,9 +125,4 @@ class block_face_recognition_student_attendance extends block_base
         $courselist = $DB->get_records_sql($sql);
         return $courselist;
     }
-
-    function applicable_formats()
-    {
-        return array('all' => true);
-    }
 }
