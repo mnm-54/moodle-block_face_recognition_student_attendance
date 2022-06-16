@@ -31,14 +31,23 @@ export const init = (studentid, successmessage, failedmessage) => {
         type: ModalFactory.types.SAVE_CANCEL,
         title: "Turn on webcam",
         body: `
-        <p>webcam will be turned on to take video and image input for your attendance</p>
-        <button id='start-webcam' class="btn btn-primary">Start Webcam</button>
-        <button id='stop-webcam' class="btn btn-secondary">Cancel</button>
-        <video id="webcam" autoplay playsinline width="300" height="225"></video>
-        <canvas id="canvas" class="d-none"></canvas>
+        <div>
+        <p>webcam will be turned on to take video and image input for your attendance
+        <i class="icon fa fa-exclamation-circle text-info fa-fw " 
+            title="If facing any issue with webcam, refresh the site and try again" role="img" 
+            aria-label="If facing any issue with webcam, refresh the site and try again">
+        </i>
+        </p>
+        </div>
+        <video id="webcam" autoplay playsinline width="300" height="225" style="display:none;"></video>
+        <canvas id="canvas" class="d-none" style="display:none;"></canvas>
         <img id="st-image" style="display: none;"/>
+        <div>
+        <button id='start-webcam' class="btn btn-primary">Start Webcam</button>
         <button id="submit-attendance" style="display:none;" class="btn btn-primary">Submit attendance</button>
         <button id="try-again" style="display:none;" class="btn btn-primary">Try again</button>
+        <button id='stop-webcam' class="btn btn-secondary">Cancel</button>
+        </div>
         <div id="message"></div>`,
       }).then(function (modal) {
         modal.setSaveButtonText("Start Webcam");
@@ -154,6 +163,9 @@ export const init = (studentid, successmessage, failedmessage) => {
           // end of ajax call
         };
         $("#start-webcam").on("click", function () {
+          webcamElement.style.display = "block";
+          canvasElement.style.display = "block";
+          $("#start-webcam").hide();
           webcam
             .start()
             .then((result) => {
