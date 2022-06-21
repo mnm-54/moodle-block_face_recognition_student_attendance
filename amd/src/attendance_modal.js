@@ -30,10 +30,10 @@ export const init = (studentid, successmessage, failedmessage) => {
     let create_modal = () => {
       ModalFactory.create({
         type: ModalFactory.types.SAVE_CANCEL,
-        title: "Turn on WEBCAM",
+        title: "Turn on webcam",
         body: `
         <div>
-        <p>WEBCAM will be turned on to take video and image input for your attendance.
+        <p>Webcam will be turned on to take video and image input for your attendance.
         <i class="icon fa fa-exclamation-circle text-muted fa-fw " 
             title="If facing any issue with webcam, refresh the site and try again" role="img" 
             aria-label="If facing any issue with webcam, refresh the site and try again">
