@@ -51,21 +51,20 @@ class block_face_recognition_student_attendance extends block_base
         $courses = $this->get_enrolled_courselist($USER->id);
 
         $this->content = new stdClass;
-        $this->content->text = $USER->username . '<br><hr>';
+        $this->content->text = '<hr>';
 
-        // $this->content->text .= $this->fn_get_block_image_url(4, $USER->id);
         $today = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
         foreach ($courses as $course) {
             $done = $DB->count_records("block_face_recog_attendance", array('student_id' => $USER->id, 'course_id' => $course->cid, 'time' => $today));
             if ($done) {
                 $this->content->text .= "<div>";
-                $this->content->text .= $course->fullname . '<p style="float: right;" >&#9989;</p>';
-                $this->content->text .= "</div>" . '<br>' . '<br>';
+                $this->content->text .= $course->fullname . '<p style="float: right; color: green;" title="Attendance complete">' . date("d.m.y") . '</p>';
+                $this->content->text .= "</div>" . '<br>' . '<br>' . '<hr>';
             } else {
                 $this->content->text .= "<div>";
                 $this->content->text .= $course->fullname . '<button type="button" id="' . $course->cid
-                    . '" style="float: right;border-radius:5px; padding:5px" class="action-modal btn-primary" >attendance</button>';
-                $this->content->text .= "</div>" . '<br>' . '<br>';
+                    . '" style="float: right;border-radius:5px; padding:5px" class="action-modal btn-primary" title="Submit Attendance">Attendance</button>';
+                $this->content->text .= "</div>" . '<br>' . '<br>' . '<hr>';
             }
         }
         $successmessage = get_config('block_face_recognition_student_attendance', 'successmessage');

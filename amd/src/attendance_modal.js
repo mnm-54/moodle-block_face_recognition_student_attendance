@@ -1,5 +1,6 @@
 import $ from "jquery";
 import ModalFactory from "core/modal_factory";
+import Notification from "core/notification";
 import Webcam from "./webcam";
 import Ajax from "core/ajax";
 export const init = (studentid, successmessage, failedmessage) => {
@@ -29,29 +30,27 @@ export const init = (studentid, successmessage, failedmessage) => {
     let create_modal = () => {
       ModalFactory.create({
         type: ModalFactory.types.SAVE_CANCEL,
-        title: "Turn on webcam",
+        title: "Turn on WEBCAM",
         body: `
         <div>
-        <p>webcam will be turned on to take video and image input for your attendance
-        <i class="icon fa fa-exclamation-circle text-info fa-fw " 
+        <p>WEBCAM will be turned on to take video and image input for your attendance.
+        <i class="icon fa fa-exclamation-circle text-muted fa-fw " 
             title="If facing any issue with webcam, refresh the site and try again" role="img" 
             aria-label="If facing any issue with webcam, refresh the site and try again">
         </i>
         </p>
         </div>
-        <video id="webcam" autoplay playsinline width="300" height="225" style="display:none;"></video>
+        <video id="webcam" autoplay playsinline width="300" height="225" style="display:none;margin:10px 60px"></video>
         <canvas id="canvas" class="d-none" style="display:none;"></canvas>
         <img id="st-image" style="display: none;"/>
-        <div>
-        <button id='start-webcam' class="btn btn-primary">Start Webcam</button>
-        <button id="submit-attendance" style="display:none;" class="btn btn-primary">Submit attendance</button>
-        <button id="try-again" style="display:none;" class="btn btn-primary">Try again</button>
-        <button id='stop-webcam' class="btn btn-secondary">Cancel</button>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; padding: 0.75rem;">
+        <button id='start-webcam' class="btn btn-primary" >Start Webcam</button>
+        <button id="submit-attendance" style="display:none;" class="btn btn-primary" >Submit attendance</button>
+        <button id="try-again" style="display:none;" class="btn btn-primary" >Try again</button>
+        <button id='stop-webcam' class="btn btn-secondary" style="margin-left:5px;">Cancel</button>
         </div>
         <div id="message"></div>`,
       }).then(function (modal) {
-        modal.setSaveButtonText("Start Webcam");
-
         modal.show();
         $(".modal-footer").hide();
 
@@ -125,7 +124,7 @@ export const init = (studentid, successmessage, failedmessage) => {
 
           Ajax.call([request])[0]
             .done(function () {
-              window.location.href = $(location).attr("href");
+              // window.location.href = $(location).attr("href");
             })
             .fail(Notification.exception);
         };
@@ -150,9 +149,16 @@ export const init = (studentid, successmessage, failedmessage) => {
                 window.console.log("Success");
                 displaySuccessMessage();
                 logAttendance();
+
                 setTimeout(() => {
                   window.location.href = $(location).attr("href");
-                }, 1000);
+                }, 2000);
+
+                Notification.alert(
+                  "Attendance Status",
+                  "Attendance Submitted Successfully",
+                  "Continue"
+                );
               } else {
                 displayFailedMessage();
               }
