@@ -50,7 +50,9 @@ class block_face_recognition_student_attendance extends block_base
 
         $courses = $this->get_enrolled_courselist($USER->id);
         $attendancedonetxt = get_string('attendance_done', 'block_face_recognition_student_attendance');
-
+        $attendancebuttontxt = get_string('attendance_button', 'block_face_recognition_student_attendance');
+        $attendancebuttontitle = get_string('attendance_button_title', 'block_face_recognition_student_attendance');
+        
         $this->content = new stdClass;
         $this->content->text = '<hr>';
 
@@ -76,8 +78,8 @@ class block_face_recognition_student_attendance extends block_base
                             type='button' 
                             id='" . $course->cid . "' 
                             class='action-modal btn btn-primary' 
-                            title='Submit Attendance'>
-                            Attendance
+                            title='". $attendancebuttontitle . "'>
+                            ". $attendancebuttontxt ."
                         </button>
                     </div>
                 </div>
