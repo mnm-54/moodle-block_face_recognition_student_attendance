@@ -29,7 +29,7 @@ class block_face_recognition_student_attendance extends block_base
 {
     function init()
     {
-        $this->title = get_string('pluginname', 'block_face_recognition_student_attendance');
+        $this->title = get_string('Attendance', 'block_face_recognition_student_attendance');
     }
 
 
@@ -58,7 +58,7 @@ class block_face_recognition_student_attendance extends block_base
             $done = $DB->count_records("block_face_recog_attendance", array('student_id' => $USER->id, 'course_id' => $course->cid, 'time' => $today));
             if ($done) {
                 $this->content->text .= "<div>";
-                $this->content->text .= $course->fullname . '<p style="float: right; color: green;" title="Attendance complete">' . date("d.m.y") . '</p>';
+                $this->content->text .= $course->fullname . '<p style="float: right; color: green;" title="Attendance complete, date:' . date("d.m.y") . '">' . "Attendance taken" . '</p>';
                 $this->content->text .= "</div>" . '<br>' . '<br>' . '<hr>';
             } else {
                 $this->content->text .= "<div>";
