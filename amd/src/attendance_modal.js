@@ -40,14 +40,16 @@ export const init = (studentid, successmessage, failedmessage) => {
         </i>
         </p>
         </div>
-        <video id="webcam" autoplay playsinline width="300" height="225" style="display:none;margin:10px 60px"></video>
+        <video id="webcam" autoplay playsinline width="300" height="225" style="display:none;margin:auto"></video>
         <canvas id="canvas" class="d-none" style="display:none;"></canvas>
         <img id="st-image" style="display: none;"/>
-        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; padding: 0.75rem;">
-        <button id='start-webcam' class="btn btn-primary" >Start Webcam</button>
-        <button id="submit-attendance" style="display:none;" class="btn btn-primary" >Submit attendance</button>
-        <button id="try-again" style="display:none;" class="btn btn-primary" >Try again</button>
-        <button id='stop-webcam' class="btn btn-secondary" style="margin-left:5px;">Cancel</button>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; padding: 0.75rem;">
+        
+          <button id='start-webcam' class="btn btn-primary" >Start Webcam</button>
+          <button id="submit-attendance" style="display:none;" class="btn btn-primary" >Submit attendance</button>
+          <button id="try-again" style="display:none;" class="btn btn-primary" >Try again</button>
+          <button id='stop-webcam' class="btn btn-secondary" style="margin-left:5px;">Cancel</button>
+        
         </div>
         <div id="message"></div>`,
       }).then(function (modal) {

@@ -49,7 +49,10 @@ class block_face_recognition_student_attendance extends block_base
         global $USER, $CFG, $PAGE;
 
         $courses = $this->get_enrolled_courselist($USER->id);
-
+        $attendancedonetxt = get_string('attendance_done', 'block_face_recognition_student_attendance');
+        $attendancebuttontxt = get_string('attendance_button', 'block_face_recognition_student_attendance');
+        $attendancebuttontitle = get_string('attendance_button_title', 'block_face_recognition_student_attendance');
+        
         $this->content = new stdClass;
         $this->content->text = '<hr>';
 
@@ -57,14 +60,31 @@ class block_face_recognition_student_attendance extends block_base
         foreach ($courses as $course) {
             $done = $DB->count_records("block_face_recog_attendance", array('student_id' => $USER->id, 'course_id' => $course->cid, 'time' => $today));
             if ($done) {
-                $this->content->text .= "<div>";
-                $this->content->text .= $course->fullname . '<p style="float: right; color: green;" title="Attendance complete, date:' . date("d.m.y") . '">' . "Attendance taken" . '</p>';
-                $this->content->text .= "</div>" . '<br>' . '<br>' . '<hr>';
+                $this->content->text .= "
+                <div class='d-flex justify-content-between mb-3'>
+                    <div class='d-flex align-items-center'>" . $course->fullname . "</div>
+                    <div class='d-flex align-items-center'>
+                        <p class='text-success m-0' title='" . $attendancedonetxt . ", date:" . date("d.m.y") . "'>" . $attendancedonetxt . "</p>                       
+                    </div>
+                </div>
+                <hr>
+                ";
             } else {
-                $this->content->text .= "<div>";
-                $this->content->text .= $course->fullname . '<button type="button" id="' . $course->cid
-                    . '" style="float: right;border-radius:5px; padding:5px" class="action-modal btn-primary" title="Submit Attendance">Attendance</button>';
-                $this->content->text .= "</div>" . '<br>' . '<br>' . '<hr>';
+                $this->content->text .= "
+                <div class='d-flex justify-content-between mb-3'>
+                    <div class='d-flex align-items-center'>" . $course->fullname . "</div>
+                    <div>
+                        <button 
+                            type='button' 
+                            id='" . $course->cid . "' 
+                            class='action-modal btn btn-primary' 
+                            title='". $attendancebuttontitle . "'>
+                            ". $attendancebuttontxt ."
+                        </button>
+                    </div>
+                </div>
+                <hr>
+                ";
             }
         }
         $successmessage = get_config('block_face_recognition_student_attendance', 'successmessage');
