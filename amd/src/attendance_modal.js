@@ -6,6 +6,7 @@ import Ajax from "core/ajax";
 export const init = (studentid, successmessage, failedmessage) => {
   $(".action-modal").on("click", function () {
     let st_img_url = "";
+    let course_name = "";
     let course_id = $(this).attr("id");
 
     // ajax call
@@ -22,6 +23,7 @@ export const init = (studentid, successmessage, failedmessage) => {
     Ajax.call([request])[0]
       .done(function (value) {
         st_img_url = value["image_url"];
+        course_name = value["course_name"];
         create_modal();
       })
       .fail(Notification.exception);
@@ -148,19 +150,15 @@ export const init = (studentid, successmessage, failedmessage) => {
               window.console.log(value);
 
               if (result >= 0.6) {
-                window.console.log("Success");
+                webcam.stop();
                 displaySuccessMessage();
                 logAttendance();
 
-                setTimeout(() => {
+                if (confirm(`Course: ${course_name}, Attendance: Completed`)) {
                   window.location.href = $(location).attr("href");
-                }, 2000);
-
-                Notification.alert(
-                  "Attendance Status",
-                  "Attendance Submitted Successfully",
-                  "Continue"
-                );
+                } else {
+                  window.location.href = $(location).attr("href");
+                }
               } else {
                 displayFailedMessage();
               }

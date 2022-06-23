@@ -40,6 +40,9 @@ class block_face_recognition_student_attendance_student_image extends external_a
 
     public static function get_student_course_image($courseid, $studentid)
     {
+        global $DB;
+        $coursename = $DB->get_record_select('course', "id = :id", array('id' => $courseid));
+
         $context = context_course::instance($courseid);
 
         $fs = get_file_storage();
@@ -52,7 +55,8 @@ class block_face_recognition_student_attendance_student_image extends external_a
                     $download_url = $fileurl->get_port() ? $fileurl->get_scheme() . '://' . $fileurl->get_host() . $fileurl->get_path() . ':' . $fileurl->get_port() : $fileurl->get_scheme() . '://' . $fileurl->get_host() . $fileurl->get_path();
 
                     $return_value = [
-                        'image_url' => $download_url
+                        'image_url' => $download_url,
+                        'course_name' => $coursename->fullname
                     ];
 
                     return $return_value;
@@ -60,7 +64,8 @@ class block_face_recognition_student_attendance_student_image extends external_a
             }
         }
         return [
-            'image_url' => false
+            'image_url' => false,
+            'course_name' => $coursename->fullname
         ];
     }
 
@@ -68,7 +73,9 @@ class block_face_recognition_student_attendance_student_image extends external_a
     {
         return new external_single_structure(
             array(
-                'image_url' => new external_value(PARAM_URL, 'Url of student image')
+                'image_url' => new external_value(PARAM_URL, 'Url of student image'),
+                'course_name' => new external_value(PARAM_TEXT, 'Course name')
+
             )
         );
     }
