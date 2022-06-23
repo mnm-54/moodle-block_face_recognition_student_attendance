@@ -128,7 +128,7 @@ export const init = (studentid, successmessage, failedmessage) => {
 
           Ajax.call([request])[0]
             .done(function () {
-              // window.location.href = $(location).attr("href");
+              window.console.log("Attendance logged");
             })
             .fail(Notification.exception);
         };
@@ -150,15 +150,22 @@ export const init = (studentid, successmessage, failedmessage) => {
               window.console.log(value);
 
               if (result >= 0.6) {
+                let today = new Date();
                 webcam.stop();
                 displaySuccessMessage();
                 logAttendance();
 
-                if (confirm(`Course: ${course_name}, Attendance: Completed`)) {
-                  window.location.href = $(location).attr("href");
-                } else {
-                  window.location.href = $(location).attr("href");
-                }
+                Notification.confirm(
+                  "Attendance submitted successfully",
+                  `
+                  Course: ${course_name}<br>
+                  Date: ${today.toLocaleDateString("en-UK")}<br>
+                  `,
+                  "Continue", // Confirm.
+                  "Cancel", // Cancel.
+                  () => (window.location.href = $(location).attr("href")),
+                  () => (window.location.href = $(location).attr("href"))
+                );
               } else {
                 displayFailedMessage();
               }
