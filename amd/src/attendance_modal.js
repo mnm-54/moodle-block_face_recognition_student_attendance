@@ -6,6 +6,7 @@ import Ajax from "core/ajax";
 export const init = (studentid, successmessage, failedmessage) => {
   $(".action-modal").on("click", function () {
     let st_img_url = "";
+    let course_name = "";
     let course_id = $(this).attr("id");
 
     // ajax call
@@ -22,6 +23,7 @@ export const init = (studentid, successmessage, failedmessage) => {
     Ajax.call([request])[0]
       .done(function (value) {
         st_img_url = value["image_url"];
+        course_name = value["course_name"];
         create_modal();
       })
       .fail(Notification.exception);
@@ -126,7 +128,7 @@ export const init = (studentid, successmessage, failedmessage) => {
 
           Ajax.call([request])[0]
             .done(function () {
-              // window.location.href = $(location).attr("href");
+              window.console.log("Attendance logged");
             })
             .fail(Notification.exception);
         };
@@ -148,18 +150,21 @@ export const init = (studentid, successmessage, failedmessage) => {
               window.console.log(value);
 
               if (result >= 0.6) {
-                window.console.log("Success");
+                let today = new Date();
+                webcam.stop();
                 displaySuccessMessage();
                 logAttendance();
 
-                setTimeout(() => {
-                  window.location.href = $(location).attr("href");
-                }, 2000);
-
-                Notification.alert(
-                  "Attendance Status",
-                  "Attendance Submitted Successfully",
-                  "Continue"
+                Notification.confirm(
+                  "Attendance submitted successfully",
+                  `
+                  Course: ${course_name}<br>
+                  Date: ${today.toLocaleDateString("en-UK")}<br>
+                  `,
+                  "Continue", // Confirm.
+                  "Cancel", // Cancel.
+                  () => (window.location.href = $(location).attr("href")),
+                  () => (window.location.href = $(location).attr("href"))
                 );
               } else {
                 displayFailedMessage();
