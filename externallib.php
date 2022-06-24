@@ -43,7 +43,8 @@ class block_face_recognition_student_attendance_student_image extends external_a
         global $DB;
         $coursename = $DB->get_record_select('course', "id = :id", array('id' => $courseid));
 
-        $context = context_course::instance($courseid);
+        // $context = context_course::instance($courseid);
+        $context = context_system::instance();
 
         $fs = get_file_storage();
         if ($files = $fs->get_area_files($context->id, 'local_participant_image_upload', 'student_photo')) {
