@@ -264,4 +264,30 @@ class block_face_recognition_student_attendance_student_image extends external_a
 
         return $token;
     }
+
+    public static function check_active_window_parameters() 
+    {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, "Course id")
+            )
+        );
+    }
+    public static function check_active_window($courseid) 
+    {
+        global $DB;
+        $course = $DB->get_record('local_piu_window', array('course_id' => $courseid));
+
+        return [
+            'active' => $course->active
+        ];
+    }
+    public static function check_active_window_returns() 
+    {
+        return new external_single_structure(
+            array(
+                'active' => new external_value(PARAM_INT, 'Return active 0 or 1')
+            )
+        );
+    }
 }

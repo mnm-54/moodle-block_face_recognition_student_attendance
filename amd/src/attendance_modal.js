@@ -175,6 +175,18 @@ export const init = (studentid, successmessage, failedmessage) => {
             });
           // end of ajax call
         };
+        // let getRequestForCheckingActiveWindowAPI = (course_id) => {
+        //   let wsfunction =
+        //     "block_face_recognition_student_attendance_check_active_window";
+        //   let params = {
+        //     courseid: course_id
+        //   };
+        //   let request = {
+        //     methodname: wsfunction,
+        //     args: params,
+        //   };
+        //   return request;
+        // }
         $("#start-webcam").on("click", function () {
           webcamElement.style.display = "block";
           canvasElement.style.display = "block";
@@ -190,7 +202,34 @@ export const init = (studentid, successmessage, failedmessage) => {
                   st_img = getDataUrl(studentimg);
                 }
                 let image = webcam.snap();
-                submitAttendance(st_img, image);
+                //let request = getRequestForCheckingActiveWindowAPI(course_id);
+                let wsfunction =
+                  "block_face_recognition_student_attendance_check_active_window";
+                let params = {
+                  courseid: course_id
+                };
+                let request = {
+                  methodname: wsfunction,
+                  args: params,
+                };
+                console.log(params);
+                
+                Ajax.call([request])[0]
+                .done(function (value) {
+                  console.log(value);
+                  if(value.active == 1) {
+                    console.log('Active Course');
+                    submitAttendance(st_img, image);
+                  }
+                  else {
+                    displayMessage("Course is not open for taking attendance", 0);
+                  }
+                })
+                .fail(function (err) {
+                  window.console.log(err);
+                });
+                
+
               });
               $("#try-again").on("click", function () {
                 removeMessages();
