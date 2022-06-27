@@ -48,7 +48,7 @@ class block_face_recognition_student_attendance extends block_base
 
         global $USER, $CFG, $PAGE;
 
-        $courses = $this->get_enrolled_courselist($USER->id);
+        $courses = $this->get_enrolled_courselist_with_active_window($USER->id);
         $attendancedonetxt = get_string('attendance_done', 'block_face_recognition_student_attendance');
         $attendancebuttontxt = get_string('attendance_button', 'block_face_recognition_student_attendance');
         $attendancebuttontitle = get_string('attendance_button_title', 'block_face_recognition_student_attendance');
@@ -132,7 +132,7 @@ class block_face_recognition_student_attendance extends block_base
         return '<p>Please upload an image first</p>';
     }
 
-    function get_enrolled_courselist($userid)
+    function get_enrolled_courselist_with_active_window($userid)
     {
         global $DB;
         $sql = "SELECT c.fullname 'fullname', c.id 'cid'
@@ -141,7 +141,8 @@ class block_face_recognition_student_attendance extends block_base
                 JOIN {role} rn on r.roleid = rn.id
                 JOIN {context} ctx on r.contextid = ctx.id
                 JOIN {course} c on ctx.instanceid = c.id
-                WHERE rn.shortname = 'student' and u.id=" . $userid;
+                JOIN {local_piu_window} lpiu on c.id = lpiu.course_id
+                WHERE rn.shortname = 'student'  and lpiu.active = 1 and u.id=" . $userid;
         $courselist = $DB->get_records_sql($sql);
         return $courselist;
     }
