@@ -89,17 +89,20 @@ class block_face_recognition_student_attendance_student_image extends external_a
         return new external_function_parameters(
             array(
                 'courseid' => new external_value(PARAM_INT, "Course id"),
-                'studentid' => new external_value(PARAM_INT, "Student id")
+                'studentid' => new external_value(PARAM_INT, "Student id"),
+                'sessionid' => new external_value(PARAM_INT, "Session id"),
             )
         );
     }
-    public static function student_attendance_update($courseid, $studentid)
+    public static function student_attendance_update($courseid, $studentid, $sessionid)
     {
         global $DB;
         $record = new stdClass();
         $record->student_id = $studentid;
         $record->course_id = $courseid;
-        $record->time =  mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+        $record->session_id = $sessionid;
+        $record->time = time();
+        //$record->time =  mktime(0, 0, 0, date("m"), date("d"), date("Y"));
         $DB->insert_record('block_face_recog_attendance', $record);
 
         return ['status' => 'updated'];
@@ -269,24 +272,26 @@ class block_face_recognition_student_attendance_student_image extends external_a
     {
         return new external_function_parameters(
             array(
-                'courseid' => new external_value(PARAM_INT, "Course id")
+                'courseid' => new external_value(PARAM_INT, "Course id"),
             )
         );
     }
     public static function check_active_window($courseid) 
     {
         global $DB;
-        $course = $DB->get_record('local_piu_window', array('course_id' => $courseid));
+        $course = $DB->get_record('local_piu_window', array('course_id' => $courseid, 'active' => 1));
 
         return [
-            'active' => $course->active
+            'active' => $course->active,
+            'sessionid' => $course->session_id,
         ];
     }
     public static function check_active_window_returns() 
     {
         return new external_single_structure(
             array(
-                'active' => new external_value(PARAM_INT, 'Return active 0 or 1')
+                'active' => new external_value(PARAM_INT, 'Return active 0 or 1'),
+                'sessionid' => new external_value(PARAM_INT, 'Return session id')
             )
         );
     }
