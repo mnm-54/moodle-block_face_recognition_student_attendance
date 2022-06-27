@@ -97,13 +97,26 @@ class block_face_recognition_student_attendance_student_image extends external_a
     public static function student_attendance_update($courseid, $studentid, $sessionid)
     {
         global $DB;
-        $record = new stdClass();
-        $record->student_id = $studentid;
-        $record->course_id = $courseid;
-        $record->session_id = $sessionid;
-        $record->time = time();
-        //$record->time =  mktime(0, 0, 0, date("m"), date("d"), date("Y"));
-        $DB->insert_record('block_face_recog_attendance', $record);
+
+        $record = $DB->get_record('block_face_recog_attendance', array(
+                        'course_id' => $courseid,
+                        'student_id' => $studentid,
+                        'session_id' => $sessionid
+                    ));
+        if(empty($record)) {
+            $record = new stdClass();
+            $record->student_id = $studentid;
+            $record->course_id = $courseid;
+            $record->session_id = $sessionid;
+            $record->time = time();
+            
+            $DB->insert_record('block_face_recog_attendance', $record);
+        } else {
+            $record->time = time();
+            
+            $DB->update_record('block_face_recog_attendance', $record);
+        }
+        
 
         return ['status' => 'updated'];
     }

@@ -56,20 +56,10 @@ class block_face_recognition_student_attendance extends block_base
         $this->content = new stdClass;
         $this->content->text = '<hr>';
 
-        $today = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+        //$today = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
         foreach ($courses as $course) {
-            $done = $DB->count_records("block_face_recog_attendance", array('student_id' => $USER->id, 'course_id' => $course->cid, 'time' => $today));
-            if ($done) {
-                $this->content->text .= "
-                <div class='d-flex justify-content-between mb-3'>
-                    <div class='d-flex align-items-center'>" . $course->fullname . "</div>
-                    <div class='d-flex align-items-center'>
-                        <p class='text-success m-0' title='" . $attendancedonetxt . ", date:" . date("d.m.y") . "'>" . $attendancedonetxt . "</p>                       
-                    </div>
-                </div>
-                <hr>
-                ";
-            } else {
+            $done = $DB->get_record("block_face_recog_attendance", array('student_id' => $USER->id, 'course_id' => $course->cid, 'session_id' => $course->session_id));
+            if (!empty($done) && $done->time == 0) {
                 $this->content->text .= "
                 <div class='d-flex justify-content-between mb-3'>
                     <div class='d-flex align-items-center'>" . $course->fullname . "</div>
@@ -85,7 +75,7 @@ class block_face_recognition_student_attendance extends block_base
                 </div>
                 <hr>
                 ";
-            }
+            } 
         }
         $successmessage = get_config('block_face_recognition_student_attendance', 'successmessage');
         $failedmessage = get_config('block_face_recognition_student_attendance', 'failedmessage');
@@ -135,7 +125,7 @@ class block_face_recognition_student_attendance extends block_base
     function get_enrolled_courselist_with_active_window($userid)
     {
         global $DB;
-        $sql = "SELECT c.fullname 'fullname', c.id 'cid'
+        $sql = "SELECT c.fullname 'fullname', c.id 'cid', lpiu.session_id
                 FROM {role_assignments} r
                 JOIN {user} u on r.userid = u.id
                 JOIN {role} rn on r.roleid = rn.id
