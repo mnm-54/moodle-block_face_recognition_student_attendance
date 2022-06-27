@@ -114,25 +114,26 @@ export const init = (studentid, successmessage, failedmessage) => {
           spn.setAttribute("class", flag ? "text-success" : "text-danger");
           document.getElementById("message").appendChild(spn);
         };
-        let logAttendance = () => {
+        let logAttendance = (sessionId) => {
           let wsfunction =
             "block_face_recognition_student_attendance_update_db";
           let params = {
             courseid: course_id,
             studentid: studentid,
+            sessionid: sessionId,
           };
           let request = {
             methodname: wsfunction,
             args: params,
           };
-
+          console.log(request);
           Ajax.call([request])[0]
             .done(function () {
               window.console.log("Attendance logged");
             })
             .fail(Notification.exception);
         };
-        let submitAttendance = (st_img, image) => {
+        let submitAttendance = (st_img, image, sessionId) => {
           let wsfunction =
             "block_face_recognition_student_attendance_face_recog_api";
           let params = {
@@ -153,7 +154,7 @@ export const init = (studentid, successmessage, failedmessage) => {
                 let today = new Date();
                 webcam.stop();
                 displaySuccessMessage();
-                logAttendance();
+                logAttendance(sessionId);
 
                 Notification.confirm(
                   "Attendance submitted successfully",
@@ -219,7 +220,7 @@ export const init = (studentid, successmessage, failedmessage) => {
                   console.log(value);
                   if(value.active == 1) {
                     console.log('Active Course');
-                    submitAttendance(st_img, image);
+                    submitAttendance(st_img, image, value.sessionid);
                   }
                   else {
                     displayMessage("Course is not open for taking attendance", 0);
