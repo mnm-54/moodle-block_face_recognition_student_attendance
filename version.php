@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->version   = 2022051600;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2021051100;        // Requires this Moodle version.
+$plugin->requires  = 2020061500;        // Requires this Moodle version.
 $plugin->component = 'block_face_recognition_student_attendance'; // Full name of the plugin (used for diagnostics)
 
 $plugin->dependencies = array(

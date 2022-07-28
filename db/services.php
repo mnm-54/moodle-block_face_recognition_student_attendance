@@ -48,6 +48,14 @@ $functions = array(
         'description' => 'Calling the api for face recog',
         'type'        => 'write',
         'ajax' => true,
+    ),
+    'block_face_recognition_student_attendance_check_active_window' => array(
+        'classname' => 'block_face_recognition_student_attendance_student_image',
+        'methodname'  => 'check_active_window',
+        'classpath'   => 'blocks/face_recognition_student_attendance/externallib.php',
+        'description' => 'Calling the api for checking active window for attendance of a particular course',
+        'type'        => 'write',
+        'ajax' => true,
     )
 );
 
@@ -56,7 +64,8 @@ $services = array(
         'functions' => array(
             'block_face_recognition_student_attendance_image_api',
             'block_face_recognition_student_attendance_update_db',
-            'block_face_recognition_student_attendance_face_recog_api'
+            'block_face_recognition_student_attendance_face_recog_api',
+            'block_face_recognition_student_attendance_check_active_window'
         ),
         'restrictedusers' => 0,
         // into the administration

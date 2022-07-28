@@ -36,3 +36,8 @@ $string['passwordtext'] = 'Password for API';
 $string['passwordlongtext'] = 'Password for API';
 $string['endpointtext'] = 'API Endpoint';
 $string['endpointlongtext'] = 'API Endpoint';
+$string['Attendance'] = 'Attendance';
+$string['attendance_done'] = 'Attendance taken';
+$string['attendance_button'] = 'Attendance';
+$string['attendance_button_title'] = 'Submit Attendance';
+

@@ -40,7 +40,11 @@ class block_face_recognition_student_attendance_student_image extends external_a
 
     public static function get_student_course_image($courseid, $studentid)
     {
-        $context = context_course::instance($courseid);
+        global $DB;
+        $coursename = $DB->get_record_select('course', "id = :id", array('id' => $courseid));
+
+        // $context = context_course::instance($courseid);
+        $context = context_system::instance();
 
         $fs = get_file_storage();
         if ($files = $fs->get_area_files($context->id, 'local_participant_image_upload', 'student_photo')) {
@@ -52,7 +56,8 @@ class block_face_recognition_student_attendance_student_image extends external_a
                     $download_url = $fileurl->get_port() ? $fileurl->get_scheme() . '://' . $fileurl->get_host() . $fileurl->get_path() . ':' . $fileurl->get_port() : $fileurl->get_scheme() . '://' . $fileurl->get_host() . $fileurl->get_path();
 
                     $return_value = [
-                        'image_url' => $download_url
+                        'image_url' => $download_url,
+                        'course_name' => $coursename->fullname
                     ];
 
                     return $return_value;
@@ -60,7 +65,8 @@ class block_face_recognition_student_attendance_student_image extends external_a
             }
         }
         return [
-            'image_url' => false
+            'image_url' => false,
+            'course_name' => $coursename->fullname
         ];
     }
 
@@ -68,7 +74,9 @@ class block_face_recognition_student_attendance_student_image extends external_a
     {
         return new external_single_structure(
             array(
-                'image_url' => new external_value(PARAM_URL, 'Url of student image')
+                'image_url' => new external_value(PARAM_URL, 'Url of student image'),
+                'course_name' => new external_value(PARAM_TEXT, 'Course name')
+
             )
         );
     }
@@ -81,18 +89,34 @@ class block_face_recognition_student_attendance_student_image extends external_a
         return new external_function_parameters(
             array(
                 'courseid' => new external_value(PARAM_INT, "Course id"),
-                'studentid' => new external_value(PARAM_INT, "Student id")
+                'studentid' => new external_value(PARAM_INT, "Student id"),
+                'sessionid' => new external_value(PARAM_INT, "Session id"),
             )
         );
     }
-    public static function student_attendance_update($courseid, $studentid)
+    public static function student_attendance_update($courseid, $studentid, $sessionid)
     {
         global $DB;
-        $record = new stdClass();
-        $record->student_id = $studentid;
-        $record->course_id = $courseid;
-        $record->time =  mktime(0, 0, 0, date("m"), date("d"), date("Y"));
-        $DB->insert_record('block_face_recog_attendance', $record);
+
+        $record = $DB->get_record('block_face_recog_attendance', array(
+                        'course_id' => $courseid,
+                        'student_id' => $studentid,
+                        'session_id' => $sessionid
+                    ));
+        if(empty($record)) {
+            $record = new stdClass();
+            $record->student_id = $studentid;
+            $record->course_id = $courseid;
+            $record->session_id = $sessionid;
+            $record->time = time();
+            
+            $DB->insert_record('block_face_recog_attendance', $record);
+        } else {
+            $record->time = time();
+            
+            $DB->update_record('block_face_recog_attendance', $record);
+        }
+        
 
         return ['status' => 'updated'];
     }
@@ -255,5 +279,33 @@ class block_face_recognition_student_attendance_student_image extends external_a
         $token = json_decode($token);
 
         return $token;
+    }
+
+    public static function check_active_window_parameters() 
+    {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, "Course id"),
+            )
+        );
+    }
+    public static function check_active_window($courseid) 
+    {
+        global $DB;
+        $course = $DB->get_record('local_piu_window', array('course_id' => $courseid, 'active' => 1));
+
+        return [
+            'active' => $course->active,
+            'sessionid' => $course->session_id,
+        ];
+    }
+    public static function check_active_window_returns() 
+    {
+        return new external_single_structure(
+            array(
+                'active' => new external_value(PARAM_INT, 'Return active 0 or 1'),
+                'sessionid' => new external_value(PARAM_INT, 'Return session id')
+            )
+        );
     }
 }

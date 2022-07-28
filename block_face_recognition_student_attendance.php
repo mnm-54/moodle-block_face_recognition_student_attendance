@@ -29,7 +29,7 @@ class block_face_recognition_student_attendance extends block_base
 {
     function init()
     {
-        $this->title = get_string('pluginname', 'block_face_recognition_student_attendance');
+        $this->title = get_string('Attendance', 'block_face_recognition_student_attendance');
     }
 
 
@@ -48,24 +48,34 @@ class block_face_recognition_student_attendance extends block_base
 
         global $USER, $CFG, $PAGE;
 
-        $courses = $this->get_enrolled_courselist($USER->id);
-
+        $courses = $this->get_enrolled_courselist_with_active_window($USER->id);
+        $attendancedonetxt = get_string('attendance_done', 'block_face_recognition_student_attendance');
+        $attendancebuttontxt = get_string('attendance_button', 'block_face_recognition_student_attendance');
+        $attendancebuttontitle = get_string('attendance_button_title', 'block_face_recognition_student_attendance');
+        
         $this->content = new stdClass;
         $this->content->text = '<hr>';
 
-        $today = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+        //$today = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
         foreach ($courses as $course) {
-            $done = $DB->count_records("block_face_recog_attendance", array('student_id' => $USER->id, 'course_id' => $course->cid, 'time' => $today));
-            if ($done) {
-                $this->content->text .= "<div>";
-                $this->content->text .= $course->fullname . '<p style="float: right; color: green;" title="Attendance complete">' . date("d.m.y") . '</p>';
-                $this->content->text .= "</div>" . '<br>' . '<br>' . '<hr>';
-            } else {
-                $this->content->text .= "<div>";
-                $this->content->text .= $course->fullname . '<button type="button" id="' . $course->cid
-                    . '" style="float: right;border-radius:5px; padding:5px" class="action-modal btn-primary" title="Submit Attendance">Attendance</button>';
-                $this->content->text .= "</div>" . '<br>' . '<br>' . '<hr>';
-            }
+            $done = $DB->get_record("block_face_recog_attendance", array('student_id' => $USER->id, 'course_id' => $course->cid, 'session_id' => $course->session_id));
+            if (!empty($done) && $done->time == 0) {
+                $this->content->text .= "
+                <div class='d-flex justify-content-between mb-3'>
+                    <div class='d-flex align-items-center'>" . $course->fullname . "</div>
+                    <div>
+                        <button 
+                            type='button' 
+                            id='" . $course->cid . "' 
+                            class='action-modal btn btn-primary' 
+                            title='". $attendancebuttontitle . "'>
+                            ". $attendancebuttontxt ."
+                        </button>
+                    </div>
+                </div>
+                <hr>
+                ";
+            } 
         }
         $successmessage = get_config('block_face_recognition_student_attendance', 'successmessage');
         $failedmessage = get_config('block_face_recognition_student_attendance', 'failedmessage');
@@ -112,16 +122,17 @@ class block_face_recognition_student_attendance extends block_base
         return '<p>Please upload an image first</p>';
     }
 
-    function get_enrolled_courselist($userid)
+    function get_enrolled_courselist_with_active_window($userid)
     {
         global $DB;
-        $sql = "SELECT c.fullname 'fullname', c.id 'cid'
+        $sql = "SELECT c.fullname 'fullname', c.id 'cid', lpiu.session_id
                 FROM {role_assignments} r
                 JOIN {user} u on r.userid = u.id
                 JOIN {role} rn on r.roleid = rn.id
                 JOIN {context} ctx on r.contextid = ctx.id
                 JOIN {course} c on ctx.instanceid = c.id
-                WHERE rn.shortname = 'student' and u.id=" . $userid;
+                JOIN {local_piu_window} lpiu on c.id = lpiu.course_id
+                WHERE rn.shortname = 'student'  and lpiu.active = 1 and u.id=" . $userid;
         $courselist = $DB->get_records_sql($sql);
         return $courselist;
     }
