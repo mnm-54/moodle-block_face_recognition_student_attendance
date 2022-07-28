@@ -59,7 +59,7 @@ class block_face_recognition_student_attendance extends block_base
         //$today = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
         foreach ($courses as $course) {
             $done = $DB->get_record("block_face_recog_attendance", array('student_id' => $USER->id, 'course_id' => $course->cid, 'session_id' => $course->session_id));
-            if (!empty($done) && $done->time == 0) {
+            if (!$done) {
                 $this->content->text .= "
                 <div class='d-flex justify-content-between mb-3'>
                     <div class='d-flex align-items-center'>" . $course->fullname . "</div>
